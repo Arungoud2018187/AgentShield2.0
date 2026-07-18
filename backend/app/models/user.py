@@ -51,6 +51,21 @@ class User(Base):
         nullable=False,
     )
 
+    prompt_logs = relationship(
+        "PromptLog",
+        back_populates="user",
+    )
+
+    security_events = relationship(
+        "SecurityEvent",
+        back_populates="user",
+    )
+
+    audit_logs = relationship(
+        "AuditLog",
+        back_populates="user",
+    )
+
     is_active = Column(
         Boolean,
         default=True,
