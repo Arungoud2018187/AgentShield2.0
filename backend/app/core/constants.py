@@ -1,0 +1,9 @@
+APP_NAME = "AgentShield"
+
+API_VERSION = "v1"
+
+EMPLOYEE = "EMPLOYEE"
+
+ANALYST = "ANALYST"
+
+ADMIN = "ADMIN"
