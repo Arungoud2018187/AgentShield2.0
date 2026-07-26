@@ -1,9 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.services.logging_service import LoggingService
 
 from app.agents.supervisor import SupervisorAgent
-from app.services.ollama_service import OllamaService
+from app.services.logging_service import LoggingService
 
 router = APIRouter(
     prefix="/api/chat",
@@ -15,26 +14,21 @@ class ChatRequest(BaseModel):
     prompt: str
 
 
+supervisor = SupervisorAgent()
+
+
 @router.post("/")
 def chat(request: ChatRequest):
 
-    supervisor = SupervisorAgent()
+    result = supervisor.process(request.prompt)
 
-    security_result = supervisor.process_prompt(request.prompt)
+    if not result["success"]:
+        return result
 
-    if not security_result["safe"]:
-        return security_result
-
-    ollama = OllamaService()
-
-    response = ollama.generate(request.prompt)
     LoggingService.log_prompt(
-    user_id=1,
-    prompt=request.prompt,
-    response=response
-)
+        user_id=1,
+        prompt=request.prompt,
+        response=result["response"]
+    )
 
-    return {
-        "safe": True,
-        "response": response
-    }
+    return result

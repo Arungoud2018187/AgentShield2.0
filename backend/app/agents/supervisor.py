@@ -1,35 +1,152 @@
+import logging
+
 from app.agents.jailbreak_agent import JailbreakAgent
 from app.agents.prompt_injection_agent import PromptInjectionAgent
+from app.agents.output_validation_agent import OutputValidationAgent
+from app.services.ollama_service import OllamaService
+
+logger = logging.getLogger(__name__)
 
 
 class SupervisorAgent:
     """
-    Main orchestrator of AgentShield.
-    Every prompt passes through this agent first.
+    AgentShield AI Supervisor
+
+    Pipeline:
+
+        User Prompt
+             │
+             ▼
+      Jailbreak Agent
+             │
+             ▼
+    Prompt Injection Agent
+             │
+             ▼
+        Ollama (Qwen3)
+             │
+             ▼
+     Output Validation Agent
+             │
+             ▼
+        Safe AI Response
     """
 
     def __init__(self):
-        self.jailbreak_agent = JailbreakAgent()
-        self.prompt_injection_agent = PromptInjectionAgent()
+        self.jailbreak = JailbreakAgent()
+        self.prompt_injection = PromptInjectionAgent()
+        self.output_validation = OutputValidationAgent()
+        self.ollama = OllamaService()
 
-    def process_prompt(self, prompt: str):
+    def process(self, prompt: str):
         """
-        Run all security checks before
-        sending the prompt to the LLM.
+        Executes the complete AI security pipeline.
         """
 
-        jailbreak_result = self.jailbreak_agent.scan(prompt)
+        logger.info("=" * 70)
+        logger.info("AgentShield Pipeline Started")
 
-        if not jailbreak_result["safe"]:
-            return jailbreak_result
+        try:
 
-        injection_result = self.prompt_injection_agent.scan(prompt)
+            # ============================================
+            # Stage 1 - Jailbreak Detection
+            # ============================================
 
-        if not injection_result["safe"]:
-            return injection_result
+            logger.info("Running Jailbreak Agent...")
 
-        return {
-            "safe": True,
-            "message": "Prompt passed all security checks.",
-            "prompt": prompt,
-        }
+            jailbreak = self.jailbreak.scan(prompt)
+
+            if not jailbreak["safe"]:
+                logger.warning(
+                    "Request blocked by Jailbreak Agent."
+                )
+
+                return {
+                    "success": False,
+                    "message": (
+                        "Your request violates the organization's "
+                        "AI security policy."
+                    ),
+                    "reason": jailbreak["reason"],
+                }
+
+            logger.info("Jailbreak Agent Passed")
+
+            # ============================================
+            # Stage 2 - Prompt Injection Detection
+            # ============================================
+
+            logger.info("Running Prompt Injection Agent...")
+
+            injection = self.prompt_injection.scan(prompt)
+
+            if not injection["safe"]:
+                logger.warning(
+                    "Request blocked by Prompt Injection Agent."
+                )
+
+                return {
+                    "success": False,
+                    "message": (
+                        "Your request violates the organization's "
+                        "AI security policy."
+                    ),
+                    "reason": injection["reason"],
+                }
+
+            logger.info("Prompt Injection Agent Passed")
+
+            # ============================================
+            # Stage 3 - AI Generation
+            # ============================================
+
+            logger.info("Generating AI response...")
+
+            response = self.ollama.generate(prompt)
+
+            logger.info("AI response generated.")
+
+            # ============================================
+            # Stage 4 - Output Validation
+            # ============================================
+
+            logger.info("Running Output Validation Agent...")
+
+            output = self.output_validation.scan(response)
+
+            if not output["safe"]:
+                logger.warning(
+                    "Unsafe AI response blocked."
+                )
+
+                return {
+                    "success": False,
+                    "message": (
+                        "The AI response could not be verified."
+                    ),
+                    "reason": output["reason"],
+                }
+
+            logger.info("Output Validation Passed")
+
+            logger.info("Pipeline Completed Successfully")
+            logger.info("=" * 70)
+
+            return {
+                "success": True,
+                "response": output["response"],
+            }
+
+        except Exception:
+
+            logger.exception(
+                "Unexpected error while processing request."
+            )
+
+            return {
+                "success": False,
+                "message": (
+                    "AgentShield AI is temporarily unavailable. "
+                    "Please try again later."
+                ),
+            }

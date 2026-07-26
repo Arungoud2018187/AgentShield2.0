@@ -1,20 +1,49 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.config.settings import settings
-from app.routers import auth, test, security
-from app.routers.chat import router as chat_router
+
+from app.api.auth import router as auth_router
+from app.api.chat import router as chat_router
+from app.api.users import router as users_router
+from app.api.security import router as security_router
+from app.api.dashboard import router as dashboard_router
+from app.api.analytics import router as analytics_router
 
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
 )
 
-# Register routers
-app.include_router(auth.router)
-app.include_router(test.router)
-app.include_router(security.router)
-app.include_router(chat_router)
+# =====================================
+# CORS
+# =====================================
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# =====================================
+# API ROUTERS
+# =====================================
+
+app.include_router(auth_router)
+app.include_router(chat_router)
+app.include_router(users_router)
+app.include_router(security_router)
+app.include_router(dashboard_router)
+app.include_router(analytics_router)
+
+# =====================================
+# ROOT
+# =====================================
 
 @app.get("/")
 def root():

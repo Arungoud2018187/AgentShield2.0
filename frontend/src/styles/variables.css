@@ -1,0 +1,18 @@
+:root{
+    --bg-primary:#020617;
+    --bg-secondary:#0F172A;
+    --card-bg:#1E293B;
+
+    --border:#334155;
+
+    --primary:#06B6D4;
+
+    --success:#22C55E;
+    --warning:#EAB308;
+    --danger:#EF4444;
+
+    --text:#F8FAFC;
+    --text-muted:#94A3B8;
+
+    --radius:14px;
+}

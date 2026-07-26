@@ -60,9 +60,11 @@ try:
     # -------------------------
     # Admin User
     # -------------------------
-    admin = db.query(User).filter(
-        User.email == "arun@agentshield.com"
-    ).first()
+    admin = (
+        db.query(User)
+        .filter(User.email == "arun@agentshield.com")
+        .first()
+    )
 
     if admin is None:
         admin = User(
@@ -76,9 +78,25 @@ try:
         )
 
         db.add(admin)
-        db.commit()
+
+    else:
+        # Always reset admin details
+        admin.employee_id = "EMP001"
+        admin.full_name = "Arun Goud"
+        admin.password_hash = hash_password("AgentShield123")
+        admin.role_id = role_objects["ADMIN"].id
+        admin.department_id = department_objects["Security"].id
+        admin.is_active = True
+
+    db.commit()
 
     print("✅ Database seeded successfully!")
+    print("📧 Email    : arun@agentshield.com")
+    print("🔑 Password : AgentShield123")
+
+except Exception as e:
+    db.rollback()
+    print(f"❌ Error: {e}")
 
 finally:
     db.close()
