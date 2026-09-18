@@ -38,13 +38,13 @@ docker compose up -d --build
 echo "Waiting for services to become healthy..."
 sleep 5
 
-# Check database
-echo "Verifying database container..."
-docker compose ps db
+# Check container status
+echo "Verifying running containers..."
+docker compose ps
 
 # Check backend logs
 echo "Verifying backend startup..."
-docker compose logs --tail=20 backend
+docker compose logs --tail=15 backend
 
 echo ""
 echo "=================================================="
