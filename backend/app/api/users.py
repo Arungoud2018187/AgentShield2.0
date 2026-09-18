@@ -19,6 +19,7 @@ router = APIRouter(
 # ==============================
 # GET ALL USERS
 # ==============================
+@router.get("")
 @router.get("/")
 def get_all_users(
     search: str = Query(None),
@@ -40,10 +41,10 @@ def get_all_users(
             )
         )
 
-    if role_id is not None:
+    if role_id:
         query = query.filter(User.role_id == role_id)
 
-    if department_id is not None:
+    if department_id:
         query = query.filter(User.department_id == department_id)
 
     if status_filter is not None:
@@ -62,7 +63,7 @@ def get_all_users(
         "total": total,
         "page": page,
         "limit": limit,
-        "pages": (total + limit - 1) // limit if total > 0 else 1,
+        "pages": (total + limit - 1) // limit,
         "users": [
             {
                 "id": user.id,
@@ -83,6 +84,7 @@ def get_all_users(
 # ==============================
 # CREATE USER
 # ==============================
+@router.post("", status_code=status.HTTP_201_CREATED)
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(
     payload: UserCreate,

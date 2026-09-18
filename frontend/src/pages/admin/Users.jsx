@@ -291,12 +291,17 @@ export default function Users() {
       {/* User Modal */}
       {openModal && (
         <UserModal
+          open={openModal}
           isOpen={openModal}
-          onClose={() => setOpenModal(false)}
+          onClose={() => {
+            setOpenModal(false);
+            setSelectedUser(null);
+          }}
           user={selectedUser}
           mode={modalMode}
           onSuccess={() => {
             setOpenModal(false);
+            setSelectedUser(null);
             loadUsers();
           }}
         />
@@ -305,8 +310,12 @@ export default function Users() {
       {/* Delete Confirmation Dialog */}
       {deleteOpen && (
         <DeleteDialog
+          open={deleteOpen}
           isOpen={deleteOpen}
-          onClose={() => setDeleteOpen(false)}
+          onClose={() => {
+            setDeleteOpen(false);
+            setSelectedUser(null);
+          }}
           onConfirm={handleDelete}
           loading={deleteLoading}
           user={selectedUser}
