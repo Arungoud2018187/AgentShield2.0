@@ -17,12 +17,13 @@ import {
     BarChart3,
     Sparkles,
 } from "lucide-react";
+import { getAnalytics } from "../../api/analyticsApi";
 
-import { analyticsService } from "../../services/adminService";
+
 
 export const Card = ({ title, value, icon, color }) => (
 
-    <div className="group rounded-2xl border border-slate-800 bg-slate-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/10">
+    <div className="group rounded-xl border border-slate-800 bg-slate-900 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/10">
 
         <div className="flex items-center justify-between">
 
@@ -34,7 +35,7 @@ export const Card = ({ title, value, icon, color }) => (
 
                 </p>
 
-                <h2 className={`mt-3 text-5xl font-black ${color}`}>
+                <h2 className={`mt-2 text-3xl font-black sm:text-4xl ${color}`}>
 
                     {value}
 
@@ -65,7 +66,7 @@ export default function Analytics() {
 
             try {
 
-                const res = await analyticsService();
+                const res = await getAnalytics();
                 setData(res);
 
             } finally {
@@ -108,7 +109,7 @@ export default function Analytics() {
 
     return (
 
-        <div className="space-y-8">
+        <div className="space-y-5">
 
             {/* Header */}
 
@@ -116,10 +117,10 @@ export default function Analytics() {
 
                 <div className="flex items-center gap-5">
 
-                    <div className="rounded-2xl bg-gradient-to-br from-cyan-500 to-violet-600 p-4 shadow-xl shadow-cyan-500/20">
+                    <div className="rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 p-3 shadow-lg shadow-cyan-500/20">
 
                         <BarChart3
-                            size={34}
+                            size={28}
                             className="text-white"
                         />
 
@@ -127,7 +128,7 @@ export default function Analytics() {
 
                     <div>
 
-                        <h1 className="text-4xl font-black text-white">
+                        <h1 className="text-2xl font-black text-white sm:text-3xl">
 
                             Analytics Center
 
@@ -145,7 +146,7 @@ export default function Analytics() {
 
                 </div>
 
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-3">
+                <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
 
                     <div className="flex items-center gap-2">
 
@@ -168,7 +169,7 @@ export default function Analytics() {
 
             {/* KPI */}
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
                 <Card
                     title="AI Requests"
@@ -192,8 +193,8 @@ export default function Analytics() {
                 />
 
                 <Card
-                    title="Ollama"
-                    value={cards.ollama_status ?? "-"}
+                    title="AI Engine"
+                    value={cards.ai_status ?? "Connected"}
                     color="text-violet-400"
                     icon={<Cpu className="text-violet-400" size={34}/>}
                 />
@@ -202,7 +203,7 @@ export default function Analytics() {
             {/* Continue in Part 2 */}
                         {/* Weekly Activity */}
 
-            <div className="grid gap-6 xl:grid-cols-3">
+            <div className="grid gap-4 xl:grid-cols-3">
 
                 <div className="xl:col-span-2 rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
 

@@ -66,6 +66,11 @@ class User(Base):
         back_populates="user",
     )
 
+    notifications = relationship(
+        "Notification",
+        back_populates="user",
+    )
+
     is_active = Column(
         Boolean,
         default=True,

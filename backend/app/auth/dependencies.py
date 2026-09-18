@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from app.auth.jwt_handler import verify_access_token
+from app.auth.jwt_handler import verify_token
 from app.database.session import get_db
 from app.models.user import User
 
@@ -17,7 +17,7 @@ def get_current_user(
     Get the currently authenticated user.
     """
 
-    payload = verify_access_token(token)
+    payload = verify_token(token)
 
     if payload is None:
         raise HTTPException(

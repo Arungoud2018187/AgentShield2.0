@@ -17,14 +17,14 @@ export default function StatCard({
         group
         relative
         overflow-hidden
-        rounded-2xl
+        rounded-xl
         border
         border-slate-800
         bg-slate-900/80
         backdrop-blur-xl
         transition-all
         duration-300
-        hover:-translate-y-2
+        hover:-translate-y-1
         hover:border-cyan-500/40
         hover:shadow-[0_18px_45px_rgba(6,182,212,0.18)]
       "
@@ -41,22 +41,22 @@ export default function StatCard({
       />
 
       {/* Glow */}
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl transition-all duration-500 group-hover:scale-125" />
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-500/10 blur-3xl transition-all duration-500 group-hover:scale-110" />
 
       {/* Border Highlight */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <div className="relative z-10 p-6">
+      <div className="relative z-10 p-4 sm:p-5">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div
             className="
               flex
-              h-16
-              w-16
+              h-12
+              w-12
               items-center
               justify-center
-              rounded-2xl
+              rounded-xl
               border
               border-cyan-500/20
               bg-slate-950/70
@@ -64,8 +64,7 @@ export default function StatCard({
               shadow-lg
               transition-all
               duration-300
-              group-hover:scale-110
-              group-hover:rotate-6
+              group-hover:scale-105
             "
           >
             {icon}
@@ -97,17 +96,17 @@ export default function StatCard({
         </div>
 
         {/* Content */}
-        <div className="mt-8">
+        <div className="mt-5">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">
             {title}
           </p>
 
-          <h2 className="mt-3 text-5xl font-black tracking-tight text-white">
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
             {value}
           </h2>
 
           {/* Progress */}
-          <div className="mt-6">
+          <div className="mt-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-xs text-slate-400">{subtitle}</span>
 

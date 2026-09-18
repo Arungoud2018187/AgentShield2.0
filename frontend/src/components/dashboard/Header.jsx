@@ -7,22 +7,35 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Header() {
   const [darkMode, setDarkMode] = useState(true);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const basePath = `/${user?.role?.toLowerCase()}`;
+  const profilePath = user?.role?.toUpperCase() === "EMPLOYEE" ? `${basePath}/profile` : `${basePath}/settings`;
+  const notificationsPath = `${basePath}/notifications`;
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    if (search.trim()) navigate(`${basePath}/users?search=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
-    <header className="sticky top-0 z-50 flex h-20 items-center justify-between border-b border-slate-800 bg-[#08111f]/95 px-8 backdrop-blur-md">
+    <header className="sticky top-0 z-50 flex min-h-[70px] items-center justify-between gap-4 border-b border-slate-800 bg-[#101725]/95 px-4 backdrop-blur-md sm:px-5 lg:px-6">
 
       {/* Left */}
 
       <div>
 
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-xl font-bold text-white sm:text-2xl">
           AgentShield Dashboard
         </h1>
 
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-0.5 hidden text-xs text-slate-400 sm:block">
           Enterprise AI Security Operations Center
         </p>
 
@@ -30,11 +43,11 @@ export default function Header() {
 
       {/* Right */}
 
-      <div className="flex items-center gap-5">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
 
         {/* Search */}
 
-        <div className="relative">
+        <form className="relative" onSubmit={submitSearch}>
 
           <Search
             size={18}
@@ -44,23 +57,29 @@ export default function Header() {
           <input
             type="text"
             placeholder="Search..."
-            className="w-72 rounded-xl border border-slate-700 bg-slate-900 py-3 pl-11 pr-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-500"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="w-28 rounded-lg border border-slate-700 bg-slate-900 py-2 pl-9 pr-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-500 sm:w-48 lg:w-60"
           />
 
-        </div>
+        </form>
 
         {/* Theme */}
 
         <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-300 hover:border-cyan-500 hover:text-cyan-400"
+          onClick={() => {
+            setDarkMode(!darkMode);
+            document.documentElement.classList.toggle("light", darkMode);
+          }}
+          aria-label="Toggle theme"
+          className="rounded-lg border border-slate-700 bg-slate-900 p-2 text-slate-300 hover:border-cyan-500 hover:text-cyan-400"
         >
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
 
         {/* Notifications */}
 
-        <button className="relative rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-300 hover:border-cyan-500 hover:text-cyan-400">
+        <button onClick={() => navigate(notificationsPath)} aria-label="Open notifications" className="relative rounded-lg border border-slate-700 bg-slate-900 p-2 text-slate-300 hover:border-cyan-500 hover:text-cyan-400">
 
           <Bell size={20} />
 
@@ -70,21 +89,21 @@ export default function Header() {
 
         {/* Profile */}
 
-        <div className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 hover:border-cyan-500">
+        <button onClick={() => navigate(profilePath)} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-left hover:border-cyan-500 sm:px-3">
 
           <UserCircle2
-            size={40}
+            size={32}
             className="text-cyan-400"
           />
 
-          <div>
+          <div className="hidden sm:block">
 
             <h3 className="font-semibold text-white">
-              Arun Goud
+              {user?.full_name || "Account"}
             </h3>
 
             <p className="text-xs text-slate-400">
-              Security Analyst
+              {user?.role || "User"}
             </p>
 
           </div>
@@ -94,7 +113,7 @@ export default function Header() {
             className="text-slate-400"
           />
 
-        </div>
+        </button>
 
       </div>
 

@@ -66,7 +66,7 @@ const services = [
         color: "bg-emerald-500",
     },
     {
-        name: "Ollama",
+        name: "OpenRouter AI",
         icon: Cpu,
         status: "Running",
         color: "bg-cyan-500",

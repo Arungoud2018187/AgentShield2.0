@@ -16,8 +16,8 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
 
-    OLLAMA_URL: str
-    MODEL_NAME: str
+    OPENROUTER_API_KEY: str
+    OPENROUTER_MODEL: str = "openrouter/free"
 
     model_config = SettingsConfigDict(
         env_file=".env",

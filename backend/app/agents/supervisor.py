@@ -3,7 +3,7 @@ import logging
 from app.agents.jailbreak_agent import JailbreakAgent
 from app.agents.prompt_injection_agent import PromptInjectionAgent
 from app.agents.output_validation_agent import OutputValidationAgent
-from app.services.ollama_service import OllamaService
+from app.services.openai_service import OpenAIService
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class SupervisorAgent:
     Prompt Injection Agent
              │
              ▼
-        Ollama (Qwen3)
+        OpenRouter (Free Router)
              │
              ▼
      Output Validation Agent
@@ -36,7 +36,7 @@ class SupervisorAgent:
         self.jailbreak = JailbreakAgent()
         self.prompt_injection = PromptInjectionAgent()
         self.output_validation = OutputValidationAgent()
-        self.ollama = OllamaService()
+        self.openai = OpenAIService()
 
     def process(self, prompt: str):
         """
@@ -67,6 +67,10 @@ class SupervisorAgent:
                         "Your request violates the organization's "
                         "AI security policy."
                     ),
+                    "agent": jailbreak.get(
+                        "agent",
+                        "JailbreakAgent",
+                    ),
                     "reason": jailbreak["reason"],
                 }
 
@@ -91,6 +95,10 @@ class SupervisorAgent:
                         "Your request violates the organization's "
                         "AI security policy."
                     ),
+                    "agent": injection.get(
+                        "agent",
+                        "PromptInjectionAgent",
+                    ),
                     "reason": injection["reason"],
                 }
 
@@ -102,7 +110,7 @@ class SupervisorAgent:
 
             logger.info("Generating AI response...")
 
-            response = self.ollama.generate(prompt)
+            response = self.openai.generate(prompt)
 
             logger.info("AI response generated.")
 
@@ -123,6 +131,10 @@ class SupervisorAgent:
                     "success": False,
                     "message": (
                         "The AI response could not be verified."
+                    ),
+                    "agent": output.get(
+                        "agent",
+                        "OutputValidationAgent",
                     ),
                     "reason": output["reason"],
                 }

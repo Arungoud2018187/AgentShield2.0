@@ -1,3 +1,8 @@
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from app.database.session import SessionLocal
 from app.models.role import Role
 from app.models.department import Department
@@ -58,41 +63,62 @@ try:
         department_objects[dept_name] = dept
 
     # -------------------------
-    # Admin User
+    # Test Users for all 3 roles
     # -------------------------
-    admin = (
-        db.query(User)
-        .filter(User.email == "arun@agentshield.com")
-        .first()
-    )
+    seed_users = [
+        {
+            "employee_id": "EMP001",
+            "full_name": "Arun Goud",
+            "email": "arun@agentshield.com",
+            "password": "AgentShield123",
+            "role": "ADMIN",
+            "department": "Security",
+        },
+        {
+            "employee_id": "EMP002",
+            "full_name": "Sarah Chen",
+            "email": "analyst@agentshield.com",
+            "password": "AgentShield123",
+            "role": "ANALYST",
+            "department": "Security",
+        },
+        {
+            "employee_id": "EMP003",
+            "full_name": "David Miller",
+            "email": "employee@agentshield.com",
+            "password": "AgentShield123",
+            "role": "EMPLOYEE",
+            "department": "Engineering",
+        },
+    ]
 
-    if admin is None:
-        admin = User(
-            employee_id="EMP001",
-            full_name="Arun Goud",
-            email="arun@agentshield.com",
-            password_hash=hash_password("AgentShield123"),
-            role_id=role_objects["ADMIN"].id,
-            department_id=department_objects["Security"].id,
-            is_active=True,
-        )
-
-        db.add(admin)
-
-    else:
-        # Always reset admin details
-        admin.employee_id = "EMP001"
-        admin.full_name = "Arun Goud"
-        admin.password_hash = hash_password("AgentShield123")
-        admin.role_id = role_objects["ADMIN"].id
-        admin.department_id = department_objects["Security"].id
-        admin.is_active = True
+    for u_data in seed_users:
+        user_obj = db.query(User).filter(User.email == u_data["email"]).first()
+        if user_obj is None:
+            user_obj = User(
+                employee_id=u_data["employee_id"],
+                full_name=u_data["full_name"],
+                email=u_data["email"],
+                password_hash=hash_password(u_data["password"]),
+                role_id=role_objects[u_data["role"]].id,
+                department_id=department_objects[u_data["department"]].id,
+                is_active=True,
+            )
+            db.add(user_obj)
+        else:
+            user_obj.employee_id = u_data["employee_id"]
+            user_obj.full_name = u_data["full_name"]
+            user_obj.password_hash = hash_password(u_data["password"])
+            user_obj.role_id = role_objects[u_data["role"]].id
+            user_obj.department_id = department_objects[u_data["department"]].id
+            user_obj.is_active = True
 
     db.commit()
 
-    print("✅ Database seeded successfully!")
-    print("📧 Email    : arun@agentshield.com")
-    print("🔑 Password : AgentShield123")
+    print("✅ Database seeded successfully with baseline portal users!")
+    print("👑 Administrator : arun@agentshield.com / EMP001 (Pass: AgentShield123)")
+    print("🔍 SOC Analyst   : analyst@agentshield.com / EMP002 (Pass: AgentShield123)")
+    print("💼 Employee      : employee@agentshield.com / EMP003 (Pass: AgentShield123)")
 
 except Exception as e:
     db.rollback()

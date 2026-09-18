@@ -119,7 +119,7 @@ export default function DepartmentChart({ data = [] }) {
 
             </div>
 
-            <div className="h-[380px] p-6">
+            <div className="h-[280px] p-4 sm:h-[340px] sm:p-6">
 
                 <ResponsiveContainer
                     width="100%"

@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.agents.supervisor import SupervisorAgent
+from app.auth.dependencies import get_current_user
+from app.models.user import User
+from app.services.logging_service import LoggingService
 
 router = APIRouter(
     prefix="/api/chat",
@@ -12,17 +15,9 @@ router = APIRouter(
 supervisor = SupervisorAgent()
 
 
-# ==========================================
-# Request Model
-# ==========================================
-
 class ChatRequest(BaseModel):
     prompt: str
 
-
-# ==========================================
-# Response Model
-# ==========================================
 
 class ChatResponse(BaseModel):
     success: bool
@@ -31,16 +26,14 @@ class ChatResponse(BaseModel):
     security: str
 
 
-# ==========================================
-# Chat Endpoint
-# ==========================================
-
 @router.post(
     "/",
     response_model=ChatResponse,
 )
-def chat(request: ChatRequest):
-
+def chat(
+    request: ChatRequest,
+    current_user: User = Depends(get_current_user),
+):
     prompt = request.prompt.strip()
 
     if not prompt:
@@ -51,20 +44,42 @@ def chat(request: ChatRequest):
 
     result = supervisor.process(prompt)
 
-    # -----------------------------
-    # Success
-    # -----------------------------
+    # ------------------------------------------
+    # Successful request
+    # ------------------------------------------
     if result["success"]:
+        LoggingService.log_prompt(
+            user_id=current_user.id,
+            prompt=prompt,
+            response=result["response"],
+        )
+
         return ChatResponse(
             success=True,
             response=result["response"],
             status="verified",
-            security="🛡️ AgentShield Verified",
+            security="🛡 AgentShield Verified",
         )
 
-    # -----------------------------
-    # Blocked
-    # -----------------------------
+    # ------------------------------------------
+    # Blocked / rejected request
+    # ------------------------------------------
+    LoggingService.log_security_event(
+        user_id=current_user.id,
+        event_type=result.get(
+            "agent",
+            "AI_SECURITY_POLICY_VIOLATION",
+        ),
+        severity="HIGH",
+        description=result.get(
+            "reason",
+            result.get(
+                "message",
+                "Request blocked by AgentShield security controls.",
+            ),
+        ),
+    )
+
     return ChatResponse(
         success=False,
         response=result.get(
@@ -76,15 +91,11 @@ def chat(request: ChatRequest):
     )
 
 
-# ==========================================
-# Health Check
-# ==========================================
-
 @router.get("/health")
 def health():
-
     return {
         "status": "healthy",
-        "model": supervisor.ollama.model,
+        "provider": "OpenRouter",
+        "model": supervisor.openai.model,
         "security_engine": "enabled",
     }

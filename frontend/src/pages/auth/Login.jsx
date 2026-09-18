@@ -1,4 +1,5 @@
 import LoginForm from "../../components/auth/LoginForm";
+import heroImage from "../../assets/images/hero.png";
 
 export default function Login() {
   return (
@@ -24,7 +25,14 @@ export default function Login() {
       />
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-2xl px-6">
+      <div className="relative z-10 grid w-full max-w-5xl items-center gap-12 px-6 lg:grid-cols-[1fr_1.1fr]">
+
+        <div className="hidden text-white lg:block">
+          <img src={heroImage} alt="AgentShield security platform" className="mb-8 w-72 drop-shadow-[0_24px_40px_rgba(139,92,246,0.35)]" />
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">Private AI security</p>
+          <h2 className="max-w-md text-5xl font-black leading-tight">Keep every AI interaction under control.</h2>
+          <p className="mt-5 max-w-md text-lg leading-8 text-slate-400">AgentShield protects prompts, responses, and enterprise access from one clear operations surface.</p>
+        </div>
 
         <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-12 shadow-2xl backdrop-blur-xl">
 
@@ -32,8 +40,8 @@ export default function Login() {
 
           <div className="flex flex-col items-center">
 
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-3xl font-bold text-white shadow-xl shadow-cyan-500/30">
-              AS
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-950 shadow-xl shadow-cyan-500/20">
+              <img src={heroImage} alt="AgentShield" className="h-16 w-16 object-contain" />
             </div>
 
             <h1 className="text-5xl font-bold tracking-tight text-white">

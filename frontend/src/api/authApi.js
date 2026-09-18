@@ -1,22 +1,16 @@
 import api from "./axios";
 
-export const loginRequest = async (email, password) => {
-
-    const formData = new URLSearchParams();
-
-    formData.append("username", email);
-    formData.append("password", password);
-
-    const response = await api.post(
-        "/api/auth/login",
-        formData,
-        {
-            headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded",
-            },
-        }
-    );
+export async function login(data) {
+    const response = await api.post("/api/auth/login", {
+        identifier: data.identifier || data.email,
+        password: data.password,
+        selected_role: data.selected_role,
+    });
 
     return response.data;
-};
+}
+
+export async function getMe() {
+    const response = await api.get("/api/auth/me");
+    return response.data;
+}

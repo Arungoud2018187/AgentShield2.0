@@ -102,7 +102,7 @@ export default function UserGrowthChart({ data = [] }) {
 
             </div>
 
-            <div className="h-[340px] p-6">
+            <div className="h-[240px] p-4 sm:h-[300px] sm:p-6">
 
                 <ResponsiveContainer
                     width="100%"

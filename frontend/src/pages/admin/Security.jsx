@@ -9,37 +9,29 @@ import {
     BrainCircuit,
     Cpu,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getSecurityDashboard, getSecurityLogs } from "../../api/securityApi";
 
 import SecurityPanel from "../../components/dashboard/SecurityPanel";
 
-const events = [
-    {
-        time: "10:25 AM",
-        threat: "Prompt Injection",
-        severity: "Critical",
-        status: "Blocked",
-    },
-    {
-        time: "09:48 AM",
-        threat: "Jailbreak Attempt",
-        severity: "High",
-        status: "Mitigated",
-    },
-    {
-        time: "09:10 AM",
-        threat: "SQL Injection",
-        severity: "Medium",
-        status: "Prevented",
-    },
-    {
-        time: "08:40 AM",
-        threat: "Sensitive Data Leak",
-        severity: "Low",
-        status: "Resolved",
-    },
-];
-
 export default function Security() {
+    const [dashboard, setDashboard] = useState(null);
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        Promise.all([getSecurityDashboard(), getSecurityLogs()])
+            .then(([dashboardData, logs]) => {
+                setDashboard(dashboardData);
+                setEvents(logs ?? []);
+            })
+            .catch((requestError) => setError(requestError?.response?.data?.detail || "Unable to load security data."))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-12 text-center text-slate-400">Loading security operations...</div>;
+
     return (
         <div className="space-y-8">
 
@@ -97,7 +89,7 @@ export default function Security() {
 
             {/* KPI */}
 
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
                 <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
 
@@ -113,7 +105,7 @@ export default function Security() {
 
                     <h2 className="mt-4 text-5xl font-black text-red-400">
 
-                        12
+                            {dashboard?.threat_level ?? "-"}
 
                     </h2>
 
@@ -133,7 +125,7 @@ export default function Security() {
 
                     <h2 className="mt-4 text-5xl font-black text-emerald-400">
 
-                        198
+                            {dashboard?.blocked_prompts ?? 0}
 
                     </h2>
 
@@ -153,7 +145,7 @@ export default function Security() {
 
                     <h2 className="mt-4 text-5xl font-black text-cyan-400">
 
-                        14K
+                            {dashboard?.total_requests ?? 0}
 
                     </h2>
 
@@ -173,7 +165,7 @@ export default function Security() {
 
                     <h2 className="mt-4 text-5xl font-black text-emerald-400">
 
-                        99%
+                            {dashboard?.system_status ?? "Unknown"}
 
                     </h2>
 
@@ -181,17 +173,19 @@ export default function Security() {
 
             </div>
 
+            {error && <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-300">{error}</div>}
+
             {/* Main */}
 
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid gap-4 lg:grid-cols-12">
 
-                <div className="col-span-8">
+                <div className="lg:col-span-8">
 
                     <SecurityPanel />
 
                 </div>
 
-                <div className="col-span-4 space-y-6">
+                <div className="space-y-6 lg:col-span-4">
 
                     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
 
@@ -325,6 +319,22 @@ export default function Security() {
 
                 </div>
 
+            </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+                <div className="mb-5 flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-white">Recent Security Events</h2>
+                    <span className="text-sm text-slate-500">Live API records</span>
+                </div>
+                <div className="space-y-3">
+                    {events.length === 0 && <p className="text-slate-400">No security events recorded.</p>}
+                    {events.map((event, index) => (
+                        <div key={`${event.timestamp}-${index}`} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-950 px-4 py-3">
+                            <span className="text-white">{event.event}</span>
+                            <span className="text-sm text-slate-400">{event.severity} · {event.timestamp ? new Date(event.timestamp).toLocaleString() : "Recently"}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Events */}

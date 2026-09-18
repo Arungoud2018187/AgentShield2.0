@@ -13,7 +13,7 @@ import {
     Clock,
 } from "lucide-react";
 
-import { dashboardService } from "../../services/adminService";
+import { getDashboard } from "../../api/dashboardApi";
 
 import StatCard from "../../components/dashboard/StatCard";
 import ActivityTable from "../../components/dashboard/ActivityTable";
@@ -30,7 +30,7 @@ export default function Dashboard() {
     useEffect(() => {
         const loadDashboard = async () => {
             try {
-                const data = await dashboardService();
+                const data = await getDashboard();
                 setStats(data);
             } catch (err) {
                 console.error(err);
@@ -84,18 +84,18 @@ export default function Dashboard() {
 
             {/* ================= HEADER ================= */}
 
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 backdrop-blur-xl">
+            <div className="rounded-xl border border-slate-800 bg-[#111a2b] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-5">
 
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
                     {/* LEFT */}
 
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-4">
 
-                        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 shadow-xl shadow-cyan-500/20">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
 
                             <Shield
-                                size={38}
+                                size={28}
                                 className="text-white"
                             />
 
@@ -107,11 +107,11 @@ export default function Dashboard() {
                                 {greeting()}
                             </p>
 
-                            <h1 className="mt-1 text-4xl font-bold text-white">
+                            <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
                                 AgentShield SOC
                             </h1>
 
-                            <p className="mt-3 text-slate-400">
+                            <p className="mt-1 text-sm text-slate-400">
                                 Enterprise AI Security Operations Center
                             </p>
 
@@ -121,9 +121,9 @@ export default function Dashboard() {
 
                     {/* RIGHT */}
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
 
-                        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                            <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
 
                             <div className="flex items-center gap-2">
 
@@ -144,7 +144,7 @@ export default function Dashboard() {
 
                         </div>
 
-                        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
 
                             <div className="flex items-center gap-2">
 
@@ -160,16 +160,16 @@ export default function Dashboard() {
                             </div>
 
                             <h3 className="mt-3 text-lg font-bold text-cyan-400">
-                                Qwen3 8B
+                                OpenRouter
                             </h3>
 
                             <p className="mt-1 text-xs text-slate-500">
-                                Ollama Connected
+                                Model: openrouter/free
                             </p>
 
                         </div>
 
-                        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+                        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
 
                             <div className="flex items-center gap-2">
 
@@ -460,7 +460,7 @@ export default function Dashboard() {
                         </h3>
 
                         <p className="mt-1 text-sm text-slate-400">
-                            Local AI • FastAPI • PostgreSQL • Ollama • Qwen3
+                            Enterprise AI Security • FastAPI • PostgreSQL • OpenRouter
                         </p>
 
                     </div>

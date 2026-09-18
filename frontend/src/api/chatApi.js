@@ -1,45 +1,17 @@
-import { sendMessage } from "../services/chatService";
+import api from "./axios";
 
-export const chatWithAI = async (prompt) => {
-    try {
+export async function chatWithAI(prompt) {
 
-        const data = await sendMessage(prompt);
+    const response = await api.post("/api/chat/", {
+        prompt,
+    });
 
-        return {
-            success: true,
-            response: data.response,
-            blocked: data.blocked,
-            risk: data.risk,
-        };
+    return response.data;
+}
 
-    } catch {
+export async function getChatHealth() {
 
-        return {
-            success: false,
-            response: "AgentShield AI is unavailable.",
-            blocked: false,
-            risk: "Error",
-        };
+    const response = await api.get("/api/chat/health");
 
-    }
-};
-
-export const checkAIHealth = async () => {
-
-    try {
-
-        const data = await fetch(
-            "http://localhost:8000/api/chat/health"
-        );
-
-        return await data.json();
-
-    } catch {
-
-        return {
-            status: "offline",
-        };
-
-    }
-
-};
+    return response.data;
+}

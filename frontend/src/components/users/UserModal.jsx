@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
     createUser,
     updateUser,
-} from "../../services/userService";
+}from "../../api/userApi"
 
 const initialForm = {
     employee_id: "",

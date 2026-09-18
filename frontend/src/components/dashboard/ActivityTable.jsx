@@ -69,7 +69,7 @@ export default function ActivityTable({ users = [] }) {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search user..."
-                                className="w-72 rounded-xl border border-slate-700 bg-slate-950 py-2.5 pl-10 pr-4 text-white outline-none transition focus:border-cyan-500"
+                                className="w-full rounded-xl border border-slate-700 bg-slate-950 py-2.5 pl-10 pr-4 text-white outline-none transition focus:border-cyan-500 sm:w-72"
                             />
 
                         </div>

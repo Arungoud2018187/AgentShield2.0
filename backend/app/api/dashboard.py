@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
+from app.auth.rbac import require_role
 from app.database.database import get_db
 from app.models.user import User
 from app.models.role import Role
@@ -13,6 +14,7 @@ from app.models.audit_log import AuditLog
 router = APIRouter(
     prefix="/api/dashboard",
     tags=["Dashboard"],
+    dependencies=[Depends(require_role("ADMIN"))],
 )
 
 
@@ -56,6 +58,14 @@ def dashboard_stats(db: Session = Depends(get_db)):
     total_audit_logs = (
         db.query(func.count(AuditLog.id)).scalar() or 0
     )
+
+    high_threats = (
+        db.query(func.count(SecurityEvent.id))
+        .filter(SecurityEvent.severity.in_(["HIGH", "CRITICAL"]))
+        .scalar()
+        or 0
+    )
+    threat_level = "High" if high_threats >= 5 else ("Medium" if high_threats > 0 else "Low")
 
     # ==========================
     # RECENT USERS
@@ -124,8 +134,8 @@ def dashboard_stats(db: Session = Depends(get_db)):
             "total_security_events": total_security_events,
             "total_audit_logs": total_audit_logs,
             "system_status": "Healthy",
-            "ai_agents": 4,
-            "threat_level": "Low",
+            "ai_agents": 3,
+            "threat_level": threat_level,
         },
 
         "recent_users": [
@@ -172,3 +182,52 @@ def dashboard_stats(db: Session = Depends(get_db)):
             for severity, total in security_distribution
         ],
     }
+
+
+@router.get("/roles")
+def get_roles(db: Session = Depends(get_db)):
+    roles = db.query(Role).all()
+    return [
+        {
+            "id": r.id,
+            "role_name": r.role_name,
+            "user_count": db.query(func.count(User.id)).filter(User.role_id == r.id).scalar() or 0,
+        }
+        for r in roles
+    ]
+
+
+@router.get("/departments")
+def get_departments(db: Session = Depends(get_db)):
+    depts = db.query(Department).all()
+    return [
+        {
+            "id": d.id,
+            "department_name": d.department_name,
+            "user_count": db.query(func.count(User.id)).filter(User.department_id == d.id).scalar() or 0,
+        }
+        for d in depts
+    ]
+
+
+@router.get("/audit-logs")
+def get_audit_logs(db: Session = Depends(get_db)):
+    logs = (
+        db.query(AuditLog)
+        .options(joinedload(AuditLog.user))
+        .order_by(AuditLog.created_at.desc())
+        .limit(100)
+        .all()
+    )
+    return [
+        {
+            "id": l.id,
+            "user_id": l.user_id,
+            "user_name": l.user.full_name if l.user else "System",
+            "user_email": l.user.email if l.user else "system@agentshield.local",
+            "action": l.action,
+            "details": l.details,
+            "created_at": l.created_at,
+        }
+        for l in logs
+    ]

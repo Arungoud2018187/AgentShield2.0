@@ -5,3 +5,5 @@ from .agent import Agent
 from .prompt_log import PromptLog
 from .security_event import SecurityEvent
 from .audit_log import AuditLog
+from .notification import Notification
+from .incident import Incident
