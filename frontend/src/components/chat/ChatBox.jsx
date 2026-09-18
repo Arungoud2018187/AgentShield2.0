@@ -88,53 +88,48 @@ export default function ChatBox({
 
         {!hasConversation ? (
 
-          <div className="flex h-full items-center justify-center px-8">
+          <div className="flex h-full items-center justify-center px-6 py-12">
 
-            <div className="mx-auto max-w-3xl text-center">
+            <div className="mx-auto max-w-2xl text-center">
 
-              <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-600 shadow-2xl shadow-cyan-500/20">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-violet-600 shadow-xl shadow-cyan-500/20">
 
-                <Bot className="h-12 w-12 text-white" />
+                <Bot className="h-8 w-8 text-white" />
 
               </div>
 
-              <h1 className="text-5xl font-bold text-white">
-                Welcome to AgentShield AI
+              <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                AgentShield AI Assistant
               </h1>
 
-              <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-400">
-                Your enterprise cybersecurity assistant powered by AI.
-                Analyze threats, investigate incidents, generate reports,
-                explain security concepts, and assist with SOC operations.
+              <p className="mx-auto mt-2 max-w-lg text-sm text-slate-400 leading-relaxed">
+                Enterprise AI guardrails active. Ask questions, analyze security practices, or compose documentation with real-time prompt protection.
               </p>
 
-              <div className="mt-10 flex flex-wrap justify-center gap-4">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
 
-                <div className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-4">
-                  <p className="font-medium text-white">
-                    🛡 Threat Analysis
-                  </p>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-left">
+                  <span className="text-xs font-bold text-white">🛡 Threat Defense</span>
+                  <p className="mt-1 text-[11px] text-slate-400">Automatic filter for jailbreaks & prompt injection.</p>
                 </div>
 
-                <div className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-4">
-                  <p className="font-medium text-white">
-                    📄 Log Investigation
-                  </p>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-left">
+                  <span className="text-xs font-bold text-white">⚡ Cloud Intelligence</span>
+                  <p className="mt-1 text-[11px] text-slate-400">Powered by OpenRouter with enterprise rate limits.</p>
                 </div>
 
-                <div className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-4">
-                  <p className="font-medium text-white">
-                    🤖 AI Assistance
-                  </p>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-left">
+                  <span className="text-xs font-bold text-white">🔒 Policy Logging</span>
+                  <p className="mt-1 text-[11px] text-slate-400">Prompts logged to immutable audit trail in PostgreSQL.</p>
                 </div>
 
               </div>
 
-              <div className="mt-12 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-6 py-3 text-slate-400">
+              <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/80 px-4 py-1.5 text-xs text-slate-400">
 
-                <Lock className="h-4 w-4" />
+                <Lock className="h-3.5 w-3.5 text-emerald-400" />
 
-                Enterprise conversations are encrypted and protected.
+                Enterprise interactions are policy-guarded and verified.
 
               </div>
 

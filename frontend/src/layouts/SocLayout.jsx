@@ -193,7 +193,7 @@ export default function SocLayout() {
       {/* Content Area */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* SOC Portal Header */}
-        <header className="sticky top-0 z-40 flex min-h-[70px] items-center justify-between border-b border-violet-950 bg-[#0a1024]/90 px-6 backdrop-blur-md">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-violet-950 bg-[#0a1024]/90 px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
               <Radio size={13} className="text-violet-400 animate-pulse" /> SOC Telemetry Active
@@ -219,7 +219,9 @@ export default function SocLayout() {
 
         {/* Page Outlet */}
         <main className="flex-1 overflow-y-auto bg-[#060a17] p-5 sm:p-6 lg:p-8">
-          <Outlet />
+          <div className="mx-auto max-w-7xl space-y-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

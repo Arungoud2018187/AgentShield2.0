@@ -10,7 +10,7 @@ client = TestClient(app)
 
 def run_tests():
     print("==================================================")
-    print("AGENTSHIELD 2.0 ENTERPRISE SYSTEM VERIFICATION")
+    print("AGENTSHIELD ENTERPRISE SYSTEM VERIFICATION")
     print("==================================================")
 
     # 1. Test invalid password

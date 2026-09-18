@@ -181,7 +181,7 @@ export default function Security() {
 
                 <div className="lg:col-span-8">
 
-                    <SecurityPanel />
+                    <SecurityPanel data={dashboard?.security_panel} />
 
                 </div>
 

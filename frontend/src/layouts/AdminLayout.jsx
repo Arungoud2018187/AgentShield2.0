@@ -170,7 +170,7 @@ export default function AdminLayout() {
       {/* Content Area */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Admin Portal Header */}
-        <header className="sticky top-0 z-40 flex min-h-[70px] items-center justify-between border-b border-slate-800/80 bg-[#0d1629]/90 px-6 backdrop-blur-md">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-slate-800/80 bg-[#0d1629]/90 px-6 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
               <Database size={13} /> PostgreSQL Connected
@@ -196,7 +196,9 @@ export default function AdminLayout() {
 
         {/* Page Outlet */}
         <main className="flex-1 overflow-y-auto bg-[#070c1b] p-5 sm:p-6 lg:p-8">
-          <Outlet />
+          <div className="mx-auto max-w-7xl space-y-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

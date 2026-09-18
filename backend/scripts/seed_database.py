@@ -76,7 +76,7 @@ try:
         },
         {
             "employee_id": "EMP002",
-            "full_name": "Sarah Chen",
+            "full_name": "Teju",
             "email": "analyst@agentshield.com",
             "password": "AgentShield123",
             "role": "ANALYST",
@@ -84,7 +84,7 @@ try:
         },
         {
             "employee_id": "EMP003",
-            "full_name": "David Miller",
+            "full_name": "Bhuvana",
             "email": "employee@agentshield.com",
             "password": "AgentShield123",
             "role": "EMPLOYEE",

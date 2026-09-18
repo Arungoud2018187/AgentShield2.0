@@ -1,8 +1,15 @@
 import api from "./axios";
 
 export async function getUsers(params = {}) {
+    const cleanedParams = {};
+    Object.entries(params).forEach(([key, val]) => {
+        if (val !== "" && val !== null && val !== undefined) {
+            cleanedParams[key] = val;
+        }
+    });
+
     const response = await api.get("/api/users", {
-        params,
+        params: cleanedParams,
     });
 
     return response.data;

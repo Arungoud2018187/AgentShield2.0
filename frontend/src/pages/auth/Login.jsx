@@ -1,95 +1,53 @@
+import { Shield } from "lucide-react";
 import LoginForm from "../../components/auth/LoginForm";
-import heroImage from "../../assets/images/hero.png";
 
 export default function Login() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#070c1b] px-4 py-10 sm:px-6 lg:px-8">
+      {/* Ambient background glows */}
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[140px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-0 h-[600px] w-[600px] rounded-full bg-blue-600/10 blur-[150px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[450px] w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/10 blur-[120px]" />
 
-      {/* Background Glow */}
-      <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-3xl"></div>
-
-      <div className="absolute -right-32 bottom-0 h-[600px] w-[600px] rounded-full bg-blue-600/10 blur-3xl"></div>
-
-      <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/5 blur-3xl"></div>
-
-      {/* Grid Overlay */}
+      {/* Grid Pattern */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
           `,
-          backgroundSize: "40px 40px",
+          backgroundSize: "32px 32px",
         }}
       />
 
-      {/* Login Card */}
-      <div className="relative z-10 grid w-full max-w-5xl items-center gap-12 px-6 lg:grid-cols-[1fr_1.1fr]">
+      {/* Open Unboxed Login Container */}
+      <div className="relative z-10 w-full max-w-[780px] py-6 sm:py-12">
+        {/* Brand Header */}
+        <div className="mb-10 flex items-center justify-between border-b border-slate-800/70 pb-8 sm:mb-12 sm:pb-9">
+          <div className="flex items-center gap-5">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-xl shadow-cyan-500/30 p-3">
+              <Shield size={34} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                AgentShield
+              </h1>
+              <p className="text-sm sm:text-base font-medium text-slate-400 mt-1">
+                Enterprise AI Security Platform
+              </p>
+            </div>
+          </div>
 
-        <div className="hidden text-white lg:block">
-          <img src={heroImage} alt="AgentShield security platform" className="mb-8 w-72 drop-shadow-[0_24px_40px_rgba(139,92,246,0.35)]" />
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">Private AI security</p>
-          <h2 className="max-w-md text-5xl font-black leading-tight">Keep every AI interaction under control.</h2>
-          <p className="mt-5 max-w-md text-lg leading-8 text-slate-400">AgentShield protects prompts, responses, and enterprise access from one clear operations surface.</p>
+          <div className="hidden sm:inline-flex items-center gap-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-xs font-semibold text-emerald-400">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Guardrails Active</span>
+          </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-12 shadow-2xl backdrop-blur-xl">
-
-          {/* Logo */}
-
-          <div className="flex flex-col items-center">
-
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-950 shadow-xl shadow-cyan-500/20">
-              <img src={heroImage} alt="AgentShield" className="h-16 w-16 object-contain" />
-            </div>
-
-            <h1 className="text-5xl font-bold tracking-tight text-white">
-              AgentShield
-            </h1>
-
-            <p className="mt-3 text-lg text-slate-400">
-              Enterprise AI Security Platform
-            </p>
-
-            <p className="mt-2 text-sm text-slate-500">
-              Secure • Private • Local AI
-            </p>
-
-          </div>
-
-          {/* Login Form */}
-
-          <div className="mt-12">
-            <LoginForm />
-          </div>
-
-          {/* Footer */}
-
-          <div className="mt-10 border-t border-slate-800 pt-6">
-
-            <div className="flex justify-center">
-
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-5 py-2">
-
-                <span className="text-lg">
-                  🛡
-                </span>
-
-                <span className="text-sm font-medium text-emerald-300">
-                  Enterprise Protected
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        {/* Form */}
+        <LoginForm />
       </div>
-
     </div>
   );
 }

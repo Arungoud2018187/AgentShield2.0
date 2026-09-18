@@ -108,11 +108,11 @@ export default function Dashboard() {
                             </p>
 
                             <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-                                AgentShield SOC
+                                AgentShield Administration Console
                             </h1>
 
                             <p className="mt-1 text-sm text-slate-400">
-                                Enterprise AI Security Operations Center
+                                Enterprise Access Governance, Policy Enforcement & AI Telemetry
                             </p>
 
                         </div>
@@ -439,7 +439,7 @@ export default function Dashboard() {
 
                         </div>
 
-                        <SecurityPanel />
+                        <SecurityPanel data={stats?.security_panel} />
 
                     </div>
 

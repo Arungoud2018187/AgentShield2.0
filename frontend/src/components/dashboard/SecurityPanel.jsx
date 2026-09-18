@@ -11,50 +11,56 @@ import {
     AlertCircle,
 } from "lucide-react";
 
-const securityData = [
+const ICON_MAP = {
+    "Prompt Injection": ShieldAlert,
+    "Jailbreak Attempts": Bug,
+    "Output Violations": ShieldCheck,
+    "Sensitive Output Violations": ShieldCheck,
+    "Sensitive Data": ShieldCheck,
+    "Policy Violations": Database,
+    "Database Threats": Database,
+};
+
+const defaultSecurityData = [
     {
         id: 1,
         title: "Prompt Injection",
-        count: 12,
-        status: "Detected",
-        severity: "High",
-        color: "text-red-400",
-        bg: "bg-red-500/10",
-        border: "border-red-500/20",
-        icon: ShieldAlert,
+        count: 0,
+        status: "Protected",
+        severity: "Low",
+        color: "text-emerald-400",
+        bg: "bg-emerald-500/10",
+        border: "border-emerald-500/20",
     },
     {
         id: 2,
         title: "Jailbreak Attempts",
-        count: 5,
-        status: "Blocked",
-        severity: "Medium",
-        color: "text-orange-400",
-        bg: "bg-orange-500/10",
-        border: "border-orange-500/20",
-        icon: Bug,
-    },
-    {
-        id: 3,
-        title: "Sensitive Data",
         count: 0,
-        status: "Secure",
-        severity: "None",
+        status: "Protected",
+        severity: "Low",
         color: "text-emerald-400",
         bg: "bg-emerald-500/10",
         border: "border-emerald-500/20",
-        icon: ShieldCheck,
+    },
+    {
+        id: 3,
+        title: "Output Violations",
+        count: 0,
+        status: "Secure",
+        severity: "Low",
+        color: "text-emerald-400",
+        bg: "bg-emerald-500/10",
+        border: "border-emerald-500/20",
     },
     {
         id: 4,
-        title: "Database Threats",
-        count: 2,
-        status: "Investigating",
+        title: "Policy Violations",
+        count: 0,
+        status: "Monitored",
         severity: "Low",
-        color: "text-yellow-400",
-        bg: "bg-yellow-500/10",
-        border: "border-yellow-500/20",
-        icon: Database,
+        color: "text-cyan-400",
+        bg: "bg-cyan-500/10",
+        border: "border-cyan-500/20",
     },
 ];
 
@@ -85,7 +91,14 @@ const services = [
     },
 ];
 
-export default function SecurityPanel({ data = securityData }) {
+export default function SecurityPanel({ data }) {
+    const activeData = (data && data.length > 0 ? data : defaultSecurityData).map((item) => ({
+        ...item,
+        icon: item.icon || ICON_MAP[item.title] || ShieldAlert,
+    }));
+
+    const totalThreats = activeData.reduce((sum, item) => sum + (item.count || 0), 0);
+    const score = Math.max(82, 100 - totalThreats * 2);
 
     return (
         <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
@@ -133,7 +146,7 @@ export default function SecurityPanel({ data = securityData }) {
                             </p>
 
                             <h1 className="mt-2 text-5xl font-black text-cyan-400">
-                                96%
+                                {score}%
                             </h1>
 
                         </div>
@@ -147,7 +160,7 @@ export default function SecurityPanel({ data = securityData }) {
 
                 </div>
 
-                {data.map((item) => {
+                {activeData.map((item) => {
 
                     const Icon = item.icon;
 
