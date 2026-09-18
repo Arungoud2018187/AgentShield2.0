@@ -24,6 +24,7 @@ class CopilotRequest(BaseModel):
     prompt: str = Field(..., min_length=1, description="Analyst investigation query")
     event_id: int | None = Field(None, description="Optional target security event ID to investigate")
     incident_id: int | None = Field(None, description="Optional target incident ID to investigate")
+    incident_data: str | None = Field(None, description="Optional raw or JSON contents of an uploaded incident file")
 
 
 class CopilotResponse(BaseModel):
@@ -99,19 +100,43 @@ def copilot_chat(
         )
 
     if specific_incident:
+        user = specific_incident.user
+        dept = user.department.department_name if (user and user.department) else "Operations"
+        rep_details = (
+            f"Reported by: {user.full_name} (Employee ID: {user.employee_id}, Email: {user.email}, Department: {dept})"
+            if user
+            else f"User ID: {specific_incident.user_id}"
+        )
         telemetry_context_str += (
             f"\n\nTARGET INVESTIGATION INCIDENT:\n"
-            f"ID: {specific_incident.id}, Title: {specific_incident.title}, Severity: {specific_incident.severity}, "
-            f"Status: {specific_incident.status}, Details: {specific_incident.description}"
+            f"Incident Code: INC-{specific_incident.id:04d}\n"
+            f"Title: {specific_incident.title}\n"
+            f"Severity: {specific_incident.severity}\n"
+            f"Status: {specific_incident.status}\n"
+            f"{rep_details}\n"
+            f"Date Reported: {specific_incident.created_at}\n"
+            f"Employee Observation / Incident Details:\n{specific_incident.description}"
+        )
+
+    if payload.incident_data:
+        telemetry_context_str += (
+            f"\n\nATTACHED/UPLOADED INCIDENT FILE CONTENT:\n"
+            f"----------------------------------------\n"
+            f"{payload.incident_data.strip()}\n"
+            f"----------------------------------------"
         )
 
     # -------------------------------------------------------------
     # Prompt the AI model as SOC Security Copilot
     # -------------------------------------------------------------
     full_prompt = (
-        f"System: You are AgentShield Security Copilot, a senior cyber threat analyst and AI defense specialist in the SOC. "
-        f"You assist SOC analysts in investigating security violations, explaining blocked prompts, analyzing attack vectors "
-        f"(such as prompt injection, jailbreak bypasses, and data exfiltration attempts), and recommending containment steps. "
+        f"System: You are AgentShield Security Copilot, an elite cyber threat analyst and AI defense specialist in the Security Operations Center (SOC). "
+        f"You assist SOC analysts in investigating security violations, employee-reported incidents, analyzing attack vectors "
+        f"(such as prompt injection, jailbreak bypasses, hallucination risks, and data exfiltration attempts), and recommending containment steps. "
+        f"When investigating an incident or uploaded incident file, provide:\n"
+        f"1. Executive Threat Summary & Attack Classification (e.g. MITRE ATLAS / OWASP Top 10 for LLM).\n"
+        f"2. Risk Assessment (Impact on enterprise data, blast radius).\n"
+        f"3. Concrete Tactical Containment & Remediation Actions (numbered step-by-step for the SOC analyst).\n"
         f"Answer concisely, professionally, and authoritatively with tactical cybersecurity recommendations.\n\n"
         f"Current Real-Time SOC Telemetry Context:\n{telemetry_context_str}\n\n"
         f"Analyst Investigation Request: {query}\n\n"
@@ -136,6 +161,7 @@ def copilot_chat(
             "open_incidents_count": len(open_incidents),
             "target_event_id": payload.event_id,
             "target_incident_id": payload.incident_id,
+            "incident_file_analyzed": bool(payload.incident_data),
         },
     )
 
