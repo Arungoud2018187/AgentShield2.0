@@ -107,6 +107,14 @@ def copilot_chat(
             if user
             else f"User ID: {specific_incident.user_id}"
         )
+        log_file_info = ""
+        if specific_incident.log_file_name and specific_incident.log_file_content:
+            log_file_info = (
+                f"\nAttached Evidence Log File ({specific_incident.log_file_name}):\n"
+                f"----------------------------------------\n"
+                f"{specific_incident.log_file_content[:5000]}\n"
+                f"----------------------------------------\n"
+            )
         telemetry_context_str += (
             f"\n\nTARGET INVESTIGATION INCIDENT:\n"
             f"Incident Code: INC-{specific_incident.id:04d}\n"
@@ -116,6 +124,7 @@ def copilot_chat(
             f"{rep_details}\n"
             f"Date Reported: {specific_incident.created_at}\n"
             f"Employee Observation / Incident Details:\n{specific_incident.description}"
+            f"{log_file_info}"
         )
 
     if payload.incident_data:

@@ -318,7 +318,9 @@ export default function SecurityCopilot() {
                   </div>
                   <p className="text-[10px] text-slate-400 truncate">
                     {loadedIncident?.reporter_name
-                      ? `Reported by: ${loadedIncident.reporter_name} (${loadedIncident.reporter_employee_id || "EMP003"}) • ${loadedIncident.reporter_department || "General"}`
+                      ? `Reported by: ${loadedIncident.reporter_name} (${loadedIncident.reporter_employee_id || "EMP003"}) • ${loadedIncident.reporter_department || "General"}${
+                          loadedIncident.log_file_name ? ` • 📄 Attached Log: ${loadedIncident.log_file_name}` : ""
+                        }`
                       : uploadedFile
                       ? `Uploaded File: ${uploadedFile.name} (${uploadedFile.size})`
                       : "Active incident telemetry loaded"}

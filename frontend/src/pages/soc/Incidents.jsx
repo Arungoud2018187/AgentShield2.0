@@ -10,7 +10,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getIncidents, downloadIncidentFile } from "../../api/incidentApi";
+import { getIncidents, downloadIncidentFile, downloadIncidentRawLog } from "../../api/incidentApi";
 
 export default function Incidents() {
   const navigate = useNavigate();
@@ -18,6 +18,11 @@ export default function Incidents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [downloadingId, setDownloadingId] = useState(null);
+  const [expandedLogs, setExpandedLogs] = useState({});
+
+  const toggleLog = (id) => {
+    setExpandedLogs((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const loadIncidents = async () => {
     setLoading(true);
@@ -39,6 +44,32 @@ export default function Incidents() {
 
   const investigateWithCopilot = (incidentId) => {
     navigate(`/soc/security-copilot?incidentId=${incidentId}`);
+  };
+
+  const handleDownloadRawLog = async (inc) => {
+    try {
+      const blob = await downloadIncidentRawLog(inc.id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = inc.log_file_name || `incident_${inc.id}_evidence.log`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      if (inc.log_file_content) {
+        const blob = new Blob([inc.log_file_content], { type: "text/plain;charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = inc.log_file_name || `incident_${inc.id}_evidence.log`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      }
+    }
   };
 
   const handleDownload = async (inc) => {
@@ -70,6 +101,9 @@ export default function Incidents() {
           status: inc.status || "Open",
           created_at: inc.created_at,
           description: inc.description,
+          evidence_log_file: inc.log_file_name
+            ? { filename: inc.log_file_name, content: inc.log_file_content }
+            : null,
         },
         reporter: {
           full_name: inc.reporter_name || "Employee",
@@ -171,6 +205,47 @@ export default function Incidents() {
                   <p className="mt-2 text-xs text-slate-300 leading-relaxed max-w-3xl">
                     {inc.description}
                   </p>
+
+                  {/* Attached Evidence Log File */}
+                  {inc.log_file_name && (
+                    <div className="mt-3 rounded-xl border border-cyan-500/30 bg-cyan-950/20 p-3 max-w-3xl">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 truncate">
+                          <FileText size={15} className="text-cyan-400 shrink-0" />
+                          <span className="font-mono text-xs font-semibold text-white truncate">
+                            {inc.log_file_name}
+                          </span>
+                          <span className="rounded bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold text-cyan-300 border border-cyan-500/20">
+                            Attached Evidence Log
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => toggleLog(inc.id)}
+                            className="text-[11px] font-medium text-cyan-400 hover:text-cyan-300 underline"
+                          >
+                            {expandedLogs[inc.id] ? "Hide Log Content" : "View Log Content"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadRawLog(inc)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-cyan-500/40 bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-cyan-200 transition hover:bg-cyan-950 hover:text-white"
+                            title="Download raw log evidence"
+                          >
+                            <Download size={12} />
+                            <span>Download Log</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {expandedLogs[inc.id] && inc.log_file_content && (
+                        <pre className="mt-2.5 max-h-48 overflow-y-auto rounded-lg bg-black/60 p-3 font-mono text-[10px] text-slate-300 whitespace-pre-wrap border border-slate-800">
+                          {inc.log_file_content}
+                        </pre>
+                      )}
+                    </div>
+                  )}
 
                   <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
                     <span className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950 px-2.5 py-1 text-slate-300 font-medium">

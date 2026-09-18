@@ -14,6 +14,8 @@ class Incident(Base):
 	description = Column(Text, nullable=False)
 	severity = Column(String(20), nullable=False, default="Medium")
 	status = Column(String(20), nullable=False, default="Open")
+	log_file_name = Column(String(255), nullable=True)
+	log_file_content = Column(Text, nullable=True)
 	created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 	user = relationship("User", lazy="joined")

@@ -16,6 +16,8 @@ class IncidentCreate(BaseModel):
 	title: str = Field(min_length=3, max_length=200)
 	description: str = Field(min_length=10)
 	severity: str = Field(default="Medium", pattern="^(Low|Medium|High|Critical)$")
+	log_file_name: str | None = None
+	log_file_content: str | None = None
 
 
 class IncidentResponse(BaseModel):
@@ -29,6 +31,8 @@ class IncidentResponse(BaseModel):
 	reporter_email: str | None = None
 	reporter_employee_id: str | None = None
 	reporter_department: str | None = None
+	log_file_name: str | None = None
+	log_file_content: str | None = None
 
 
 def _to_response(inc: Incident) -> IncidentResponse:
@@ -45,6 +49,8 @@ def _to_response(inc: Incident) -> IncidentResponse:
 		reporter_email=user.email if user else None,
 		reporter_employee_id=user.employee_id if user else None,
 		reporter_department=dept_name,
+		log_file_name=inc.log_file_name,
+		log_file_content=inc.log_file_content,
 	)
 
 
@@ -117,6 +123,10 @@ def download_incident(
 			"status": incident.status,
 			"created_at": incident.created_at.isoformat() if incident.created_at else None,
 			"description": incident.description,
+			"evidence_log_file": {
+				"filename": incident.log_file_name,
+				"content": incident.log_file_content,
+			} if incident.log_file_name else None,
 		},
 		"reporter": {
 			"full_name": user.full_name if user else "Employee",
@@ -135,5 +145,29 @@ def download_incident(
 		headers={
 			"Content-Disposition": f'attachment; filename="AgentShield-Incident-INC-{incident.id:04d}.json"',
 			"Content-Type": "application/json",
+		},
+	)
+
+
+@router.get("/{incident_id}/raw-log")
+def download_incident_raw_log(
+	incident_id: int,
+	db: Session = Depends(get_db),
+	current_user=Depends(get_current_user),
+):
+	from fastapi.responses import PlainTextResponse
+
+	incident = db.query(Incident).filter(Incident.id == incident_id).first()
+	if not incident or not incident.log_file_content:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No log file attached to this incident")
+	if current_user.role.role_name.upper() == "EMPLOYEE" and incident.user_id != current_user.id:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
+	filename = incident.log_file_name or f"incident_{incident.id}_evidence.log"
+	return PlainTextResponse(
+		content=incident.log_file_content,
+		headers={
+			"Content-Disposition": f'attachment; filename="{filename}"',
+			"Content-Type": "text/plain; charset=utf-8",
 		},
 	)

@@ -21,3 +21,10 @@ export async function downloadIncidentFile(incidentId) {
   });
   return response.data;
 }
+
+export async function downloadIncidentRawLog(incidentId) {
+  const response = await api.get(`/api/incidents/${incidentId}/raw-log`, {
+    responseType: "blob",
+  });
+  return response.data;
+}
