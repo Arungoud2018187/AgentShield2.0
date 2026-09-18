@@ -25,10 +25,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,8 +47,18 @@ app.include_router(copilot_router)
 app.include_router(employee_router)
 
 # =====================================
-# ROOT
+# HEALTH & ROOT ENDPOINTS
 # =====================================
+
+@app.get("/api/health")
+def api_health():
+    return {
+        "status": "healthy",
+        "service": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "ai_engine": "OpenRouter",
+        "model": settings.OPENROUTER_MODEL,
+    }
 
 @app.get("/")
 def root():

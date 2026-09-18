@@ -14,3 +14,4 @@ python-multipart==0.0.32
 httpx==0.28.1
 requests==2.33.1
 PyYAML==6.0.3
+email-validator==2.3.0
