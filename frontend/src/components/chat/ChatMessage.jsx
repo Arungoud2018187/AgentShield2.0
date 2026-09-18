@@ -9,6 +9,7 @@ import {
   ThumbsDown,
   ShieldCheck,
 } from "lucide-react";
+import MarkdownRenderer from "../common/MarkdownRenderer";
 
 export default function ChatMessage({
   message,
@@ -78,9 +79,13 @@ export default function ChatMessage({
               : "border-slate-700 bg-slate-900 text-slate-100"
           } px-6 py-5`}
         >
-          <div className="whitespace-pre-wrap break-words leading-8 text-[15px]">
-            {message.content}
-          </div>
+          {isUser ? (
+            <div className="whitespace-pre-wrap break-words leading-7 text-[15px]">
+              {message.content}
+            </div>
+          ) : (
+            <MarkdownRenderer content={message.content} className="text-[14px] leading-7" />
+          )}
 
           {/* USER FOOTER */}
 

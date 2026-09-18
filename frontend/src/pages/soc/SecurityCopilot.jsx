@@ -23,6 +23,7 @@ import {
 import { askSecurityCopilot, getCopilotQuickPrompts } from "../../api/copilotApi";
 import { getSecurityDashboard, getSecurityLogs } from "../../api/securityApi";
 import { getIncident } from "../../api/incidentApi";
+import MarkdownRenderer from "../../components/common/MarkdownRenderer";
 
 export default function SecurityCopilot() {
   const [searchParams] = useSearchParams();
@@ -369,12 +370,12 @@ export default function SecurityCopilot() {
                 )}
 
                 <div
-                  className={`max-w-2xl rounded-2xl p-4 text-xs leading-relaxed ${
+                  className={`rounded-2xl p-4 text-xs leading-relaxed ${
                     isUser
-                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/20"
+                      ? "max-w-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/20"
                       : m.isError
-                      ? "bg-red-950/30 border border-red-500/30 text-red-300"
-                      : "bg-slate-900/90 border border-slate-800 text-slate-200 shadow-sm"
+                      ? "max-w-3xl bg-red-950/30 border border-red-500/30 text-red-300"
+                      : "max-w-3xl w-full bg-slate-900/90 border border-slate-800 text-slate-200 shadow-sm"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-4 mb-2 pb-1.5 border-b border-white/10 text-[10px]">
@@ -393,7 +394,11 @@ export default function SecurityCopilot() {
                     </div>
                   )}
 
-                  <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+                  {isUser ? (
+                    <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+                  ) : (
+                    <MarkdownRenderer content={m.content} />
+                  )}
 
                   {m.telemetryContext && (
                     <div className="mt-3 pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-2 text-[10px] text-slate-400">
